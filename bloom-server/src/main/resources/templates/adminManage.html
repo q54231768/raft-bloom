@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="Stylesheet"   type="text/css"    href="static/layui/css/layui.css"/>
+    <script  type="text/javascript"  src="static/layui/layui.all.js" ></script>
+    <script type="text/javascript" src="static/js/jquery-3.3.1.min.js"  charset="utf-8"   ></script>
+    <script  type="text/javascript"  src="static/js/adminManage.js" ></script>
+    <title>Title</title>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">BKDR布隆后台管理</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <!--<li class="layui-nav-item"><a href="javascript:getSearchUpdateMoviePage()">电影信息管理</a></li>-->
+            <!--<li class="layui-nav-item"><a href="javascript:getSearchCastingPeoplePage()">剧组人员信息管理</a></li>-->
+            <!--<li class="layui-nav-item"><a href="">用户</a></li>-->
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <!--<li class="layui-nav-item">-->
+                <!--<a href="javascript:;">-->
+                    <!--<img src="http://t.cn/RCzsdCq" class="layui-nav-img">-->
+                <!--</a>-->
+                <!--<dl class="layui-nav-child">-->
+                    <!--<dd><a href="">基本资料</a></dd>-->
+                    <!--<dd><a href="">安全设置</a></dd>-->
+                <!--</dl>-->
+            <!--</li>-->
+            <!--<li class="layui-nav-item"><a href="">退了</a></li>-->
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">插入</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:showSingleInsertForm();">单个插入</a></dd>
+                        <dd><a href="javascript:showBatchInsertForm();">批量插入</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:showSearchStrForm();">查询字符串</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:showStatusTable();">查看当前容器状态</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:showRestForm();">重置容器</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <div   id="mainArea" padding="15px"></div>
+
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+
+    </div>
+</div>
+
+</body>
+
+<script>
+    showStatusTable()
+</script>
+
+
+
+
+
+</html>
