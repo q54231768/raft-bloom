@@ -7,7 +7,10 @@ import java.util.concurrent.*;
 
 public class RaftThreadPoolExecutor extends ThreadPoolExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RaftThreadPoolExecutor.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(RaftThreadPoolExecutor.class);
+
+    private static final Logger LOGGER = null;
+
 
     private static final ThreadLocal<Long> THREAD_START_WORK_TIME = ThreadLocal.withInitial(System::currentTimeMillis);
 

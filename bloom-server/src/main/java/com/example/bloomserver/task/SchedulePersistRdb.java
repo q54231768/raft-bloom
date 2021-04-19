@@ -1,8 +1,8 @@
 package com.example.bloomserver.task;
 
 import com.alibaba.fastjson.JSON;
+import com.example.bloominterface.pojo.BloomFilterSituation;
 import com.example.bloomserver.tools.BloomFilter;
-import com.example.bloomserver.tools.pojo.BloomFilterSituation;
 
 import java.io.*;
 

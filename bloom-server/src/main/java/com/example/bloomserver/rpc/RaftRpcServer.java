@@ -9,15 +9,15 @@ public class RaftRpcServer {
     public static RaftRpcServer raftRpcServer;
 
 
-    public static RaftRpcServer getRaftRpcServer(int port){
+    public static RaftRpcServer getRaftRpcServer(int port, RaftUserProcessor raftUserProcessor) {
 
-        if(isServerStart == 0){
-            synchronized (com.example.bloomserver.rpc.RaftRpcServer.class){
-                if(isServerStart == 0){
+        if (isServerStart == 0) {
+            synchronized (com.example.bloomserver.rpc.RaftRpcServer.class) {
+                if (isServerStart == 0) {
                     RaftRpcServer server = new RaftRpcServer();
-                    if(server.init(port) == false){
+                    if (server.init(port, raftUserProcessor) == false) {
                         return null;
-                    }else{
+                    } else {
                         raftRpcServer = server;
                     }
                 }
@@ -32,18 +32,15 @@ public class RaftRpcServer {
 
     private RpcServer rpcServer;
 
-
-    public boolean init(int port) {
-        this.port = port;
-        rpcServer = new RpcServer(port, false, false);
-        return rpcServer.start();
+    public RaftRpcServer() {
     }
 
-
-
-
-
-
+    public boolean init(int port, RaftUserProcessor raftUserProcessor) {
+        this.port = port;
+        rpcServer = new RpcServer(port);
+        rpcServer.registerUserProcessor(raftUserProcessor);
+        return rpcServer.start();
+    }
 
 
 }

@@ -1,8 +1,8 @@
 package com.example.bloomserver.controller;
 
 
+import com.example.bloominterface.pojo.BloomFilterSituation;
 import com.example.bloomserver.tools.BloomFilter;
-import com.example.bloomserver.tools.pojo.BloomFilterSituation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

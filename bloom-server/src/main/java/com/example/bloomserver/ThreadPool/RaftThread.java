@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 
 public class RaftThread extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RaftThread.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(RaftThread.class);
+    private static final Logger LOGGER = null;
+
     private static final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e)
             -> LOGGER.warn("Exception occurred from thread {}", t.getName(), e);
 

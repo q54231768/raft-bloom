@@ -1,21 +1,21 @@
 package com.example.bloominterface.pojo;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class AddEntryRes {
+public class AddEntryRes implements Serializable {
     private long term;
 
-    private long success;
+    private int success;
 
 
     public AddEntryRes() {
     }
 
-    public AddEntryRes(long term, long success) {
+    public AddEntryRes(long term, int success) {
         this.term = term;
         this.success = success;
     }
-
 
     public long getTerm() {
         return term;
@@ -25,11 +25,11 @@ public class AddEntryRes {
         this.term = term;
     }
 
-    public long getSuccess() {
+    public int getSuccess() {
         return success;
     }
 
-    public void setSuccess(long success) {
+    public void setSuccess(int success) {
         this.success = success;
     }
 

@@ -1,22 +1,21 @@
 package com.example.bloomserver.raft;
 
 import com.alibaba.fastjson.JSON;
+import com.example.bloominterface.exception.ExceptionHandler;
+import com.example.bloominterface.exception.GlobalLoggerHandler;
 import com.example.bloominterface.pojo.LogEntry;
-import com.example.bloomserver.exception.ExceptionHandler;
-import com.example.bloomserver.exception.impl.DefaultExceptionHandler;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RaftLog {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RaftLog.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(RaftLog.class);
+    private static final Logger LOGGER = null;
 
     //日志数据库文件位置
     private String logDir;
@@ -34,7 +33,6 @@ public class RaftLog {
     private ReentrantLock logLock = new ReentrantLock();
 
 
-    private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
 
     static {
         RocksDB.loadLibrary();
@@ -65,7 +63,6 @@ public class RaftLog {
 
     public RaftLog(String logDir, ExceptionHandler exceptionHandler) {
         this.logDir = logDir;
-        this.exceptionHandler = exceptionHandler;
     }
 
     public String getLogDir() {
@@ -89,13 +86,6 @@ public class RaftLog {
     }
 
 
-    public ExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-    }
 
 
     public long getLastIndex() throws RocksDBException {
@@ -113,7 +103,7 @@ public class RaftLog {
     public boolean writeLog(LogEntry logEntry) {
         boolean result = false;
         try {
-            this.logLock.tryLock(3000, TimeUnit.MILLISECONDS);
+            this.logLock.tryLock(2000, TimeUnit.MILLISECONDS);
             long index = getLastIndex();
             ++index;
             logEntry.setIndex(index);
@@ -123,12 +113,36 @@ public class RaftLog {
             updateLastIndex(index);
             result = true;
         } catch (RocksDBException | InterruptedException e) {
-            exceptionHandler.handle(e, LOGGER);
+            GlobalLoggerHandler.handle(e, LOGGER);
         } finally {
             logLock.unlock();
         }
         return result;
     }
+
+    public long checkLogEntrys(LogEntry[] logEntrys){
+        if(logEntrys == null || logEntrys.length == 0) return -2;
+        long index = logEntrys[0].getIndex();
+        try {
+            this.logLock.tryLock(3000, TimeUnit.MILLISECONDS);
+            long lastIndex = getLastIndex();
+            for (int i = 0; i < logEntrys.length && index <= lastIndex; ++i) {
+                LogEntry newLogEntry = getLog(index);
+                if(newLogEntry == null) break;
+                if(newLogEntry.getIndex() != logEntrys[i].getIndex()
+                        || newLogEntry.getTerm() != logEntrys[i].getTerm()) break;
+                ++ index;
+            }
+        } catch (RocksDBException | InterruptedException e) {
+            GlobalLoggerHandler.handle(e, LOGGER);
+        } finally {
+            logLock.unlock();
+        }
+        return index;
+    }
+
+
+
 
     public boolean batchWriteLog(LogEntry[] logEntrys) {
         if (logEntrys == null || logEntrys.length == 0) {
@@ -137,7 +151,7 @@ public class RaftLog {
         boolean result = false;
         try {
             this.logLock.tryLock(3000, TimeUnit.MILLISECONDS);
-            long index = getLastIndex();
+            long index = logEntrys[0].getIndex() - 1;
             for (int i = 0; i < logEntrys.length; ++i) {
                 ++index;
                 logEntrys[i].setIndex(index);
@@ -148,7 +162,7 @@ public class RaftLog {
             updateLastIndex(index);
             result = true;
         } catch (RocksDBException | InterruptedException e) {
-            exceptionHandler.handle(e, LOGGER);
+            GlobalLoggerHandler.handle(e, LOGGER);
         } finally {
             logLock.unlock();
         }
@@ -160,17 +174,17 @@ public class RaftLog {
     public boolean batchDeleteLog(long start) {
         boolean result = false;
         try {
-            this.logLock.tryLock(3000, TimeUnit.MILLISECONDS);
+            this.logLock.tryLock(300, TimeUnit.MILLISECONDS);
             long lastIndex = getLastIndex();
             if(start <= lastIndex) {
-                long applyIndex = getApplyIndex();
-                if(start > applyIndex){
                     updateLastIndex(start - 1);
+                    for(long i = start;start < lastIndex + 1; ++start){
+                        rocksDB.delete((i + "").getBytes());
+                    }
                     result = true;
-                }
             }
         } catch (RocksDBException | InterruptedException e) {
-            exceptionHandler.handle(e, LOGGER);
+            GlobalLoggerHandler.handle(e, LOGGER);
         } finally {
             logLock.unlock();
         }
@@ -197,16 +211,16 @@ public class RaftLog {
     }
 
 
-    public long getApplyIndex() throws RocksDBException {
-        byte[] bytes = rocksDB.get(APPLY_INDEX_KEY);
-        if (bytes == null) {
-            return -1;
-        } else {
-            String applyIndexStr = new String(bytes);
-            long applyIndex = Long.parseLong(applyIndexStr);
-            return applyIndex;
-        }
-    }
+//    public long getApplyIndex() throws RocksDBException {
+//        byte[] bytes = rocksDB.get(APPLY_INDEX_KEY);
+//        if (bytes == null) {
+//            return -1;
+//        } else {
+//            String applyIndexStr = new String(bytes);
+//            long applyIndex = Long.parseLong(applyIndexStr);
+//            return applyIndex;
+//        }
+//    }
 
 
 }

@@ -2,42 +2,26 @@ package com.example.bloominterface.pojo;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PeerNode implements Serializable {
 
-
-    private boolean isSelf;
-
-    private boolean isLeader;
 
     private String address;
 
     private String nodeId;
 
+    private  long nextIndex;
+
+    private  long matchIndex = -1;
+
+
     public PeerNode() {
     }
 
-    public PeerNode(boolean isSelf, boolean isLeader, String address) {
-        this.isSelf = isSelf;
-        this.isLeader = isLeader;
+    public PeerNode(String address, String nodeId) {
         this.address = address;
-        this.nodeId = address;
-    }
-
-    public boolean isSelf() {
-        return isSelf;
-    }
-
-    public void setSelf(boolean self) {
-        isSelf = self;
-    }
-
-    public boolean isLeader() {
-        return isLeader;
-    }
-
-    public void setLeader(boolean leader) {
-        isLeader = leader;
+        this.nodeId = nodeId;
     }
 
     public String getAddress() {
@@ -56,28 +40,48 @@ public class PeerNode implements Serializable {
         this.nodeId = nodeId;
     }
 
+    public long getNextIndex() {
+        return nextIndex;
+    }
+
+    public void setNextIndex(long nextIndex) {
+        this.nextIndex = nextIndex;
+    }
+
+    public long getMatchIndex() {
+        return matchIndex;
+    }
+
+    public void setMatchIndex(long matchIndex) {
+        this.matchIndex = matchIndex;
+    }
+
+    public synchronized void setNextIndexAndMatchIndex(long nextIndex, long matchIndex) {
+        if (matchIndex >= this.matchIndex) {
+            this.nextIndex = nextIndex;
+            this.matchIndex = matchIndex;
+        }
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PeerNode peerNode = (PeerNode) o;
-        return isSelf == peerNode.isSelf &&
-                isLeader == peerNode.isLeader &&
-                Objects.equals(address, peerNode.address) &&
+        return Objects.equals(address, peerNode.address) &&
                 Objects.equals(nodeId, peerNode.nodeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isSelf, isLeader, address, nodeId);
+        return Objects.hash(address, nodeId);
     }
 
     @Override
     public String toString() {
         return "PeerNode{" +
-                "isSelf=" + isSelf +
-                ", isLeader=" + isLeader +
-                ", address='" + address + '\'' +
+                "address='" + address + '\'' +
                 ", nodeId='" + nodeId + '\'' +
                 '}';
     }

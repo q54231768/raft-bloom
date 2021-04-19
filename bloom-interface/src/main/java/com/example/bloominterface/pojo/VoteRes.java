@@ -1,20 +1,36 @@
 package com.example.bloominterface.pojo;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class VoteRes {
+public class VoteRes implements Serializable {
 
 
     private long term;
 
-    private long voteGranted;
-
+    private int voteGranted;
 
     public VoteRes() {
     }
 
-    public VoteRes(long term, long voteGranted) {
+    public VoteRes(long term, int voteGranted) {
         this.term = term;
+        this.voteGranted = voteGranted;
+    }
+
+    public long getTerm() {
+        return term;
+    }
+
+    public void setTerm(long term) {
+        this.term = term;
+    }
+
+    public int getVoteGranted() {
+        return voteGranted;
+    }
+
+    public void setVoteGranted(int voteGranted) {
         this.voteGranted = voteGranted;
     }
 

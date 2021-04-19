@@ -3,9 +3,9 @@ package com.example.bloomserver.config;
 
 import com.alibaba.fastjson.JSON;
 
+import com.example.bloominterface.pojo.BloomFilterSituation;
 import com.example.bloomserver.task.SchedulePersistRdb;
 import com.example.bloomserver.tools.BloomFilter;
-import com.example.bloomserver.tools.pojo.BloomFilterSituation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -59,6 +59,17 @@ public class RaftThreadPool {
         return threadPoolExecutor.submit(r);
     }
 
+    public  void execute(Runnable r) {
+        threadPoolExecutor.execute(r);
+    }
+
+    public  void execute(Runnable r, boolean sync) {
+        if (sync) {
+            r.run();
+        } else {
+            threadPoolExecutor.execute(r);
+        }
+    }
 
     static class RaftThreadFactory implements ThreadFactory {
 

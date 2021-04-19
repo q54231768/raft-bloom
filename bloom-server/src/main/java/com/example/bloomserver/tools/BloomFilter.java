@@ -1,9 +1,9 @@
 package com.example.bloomserver.tools;
 
 
+import com.example.bloominterface.pojo.BloomFilterSituation;
 import com.example.bloomserver.tools.hash.BKDRHash;
 import com.example.bloomserver.tools.hash.HashFunction;
-import com.example.bloomserver.tools.pojo.BloomFilterSituation;
 
 public class BloomFilter {
 
@@ -68,7 +68,6 @@ public class BloomFilter {
         if (this.mightContain(content)) {
             synchronized (this) {
                 ++collideCount;
-                collisionProbability = collideCount / insertCount;
             }
             return;
         }
@@ -179,6 +178,8 @@ public class BloomFilter {
     }
 
     public BloomFilterSituation getBloomFilterSituation() {
+        if(insertCount == 0) collisionProbability = 0;
+        else collisionProbability = collideCount / insertCount;
         return new BloomFilterSituation(this.bitSize,
                 this.hashNum,
                 this.insertCount,

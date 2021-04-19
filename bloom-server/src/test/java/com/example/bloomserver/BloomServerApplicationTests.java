@@ -52,17 +52,18 @@ class BloomServerApplicationTests {
     @Test
     public void testBatchWriteLog(){
         RaftLog raftLog = new RaftLog("D:\\raft-log\\1");
-        for(int i=1;i<3;++i) {
+        LogEntry logEntrys[] = new LogEntry[3];
+        for(int i=0;i<3;++i) {
             LogEntry logEntry = LogEntry.newBuilder().
-                    term(i).
+                    term(1).
                     commandType(i).
                     index(i).
                     value("infra").
                     build();
-            raftLog.writeLog(logEntry);
-
+            logEntrys[i] = logEntry;
         }
-
+//        System.out.println(raftLog.batchWriteLog(logEntrys));
+        System.out.println(raftLog.checkLogEntrys(logEntrys));
 
 
     }
@@ -135,6 +136,73 @@ class BloomServerApplicationTests {
     }
 
 
+    @Test
+    public void testFutrueTaskUse() throws InterruptedException {
+       Thread thread = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               ArrayList<Future> arrayList = new ArrayList<>(20);
+               AtomicInteger integer = new AtomicInteger(0);
+               System.out.println(integer.get());
+               System.out.println(" ");
+               RaftThreadPool raftThreadPool = new RaftThreadPool();
+               raftThreadPool.init();
+               ArrayList<Future> arr = new ArrayList<>(20);
+               CountDownLatch countDownLatch = new CountDownLatch(20);
+               for(int i=0;i<20;++i){
+                   int finalI = i;
+                   arr.add(raftThreadPool.submit(new Callable() {
+                       @Override
+                       public Object call() throws Exception {
+                           if(finalI > 5){
+                               sleep(300);
+                           }
+                           integer.incrementAndGet();
+                           System.out.println("i=" + finalI +Thread.currentThread().getName()+ integer);
+                           countDownLatch.countDown();
+                           return finalI;
+                       }
+                   }));
+               }
+               try {
+                   countDownLatch.await(200, TimeUnit.MILLISECONDS);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+//        for (int i=0;i<20;++i){
+//            try {
+//                System.out.println((Integer) arr.get(i).get());
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        }
+               System.out.println(" ");
+               System.out.println(integer.get());
+           }
+       });
+       thread.start();
+       sleep(3000);
+
+
+
+    }
+
+
+
+    @Test
+    public void testThrow() throws Exception {
+
+        try{
+            throw new Exception("hello");
+        }catch (Exception e){
+            throw e;
+        }finally {
+            System.out.println("yes man");
+        }
+
+    }
 
 
 }
